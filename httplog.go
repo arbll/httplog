@@ -11,7 +11,7 @@ type LogEntry struct {
 }
 
 type LogParser interface {
-	parseLine(line string) (LogEntry, error)
+	ParseLine(line string) (LogEntry, error)
 }
 
 type LogParseError struct {
@@ -27,5 +27,5 @@ func NewLogParseError(parsedLine string) error {
 }
 
 type LogSerializer interface {
-	serializeEntry(logEntry LogEntry) string
+	SerializeEntry(logEntry LogEntry) string
 }
