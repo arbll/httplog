@@ -9,10 +9,9 @@ import (
 
 const commonFormatPropertyCount = 7
 
-var commonFormatRegexp = regexp.MustCompile(`^(\S+) (\S+) (\S+) \[(.*)\] "(.*)" (\d{3}) (\d{1,})`)
+var commonFormatRegexp = regexp.MustCompile(`^(\S+) (\S+) (\S+) \[(.*)\] "(.*)" (\d{3}) (\d+)`)
 
-type LogParser struct {
-}
+type LogParser struct{}
 
 func (l LogParser) ParseLine(line string) (httplog.LogEntry, error) {
 

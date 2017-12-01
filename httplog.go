@@ -27,5 +27,5 @@ func NewLogParseError(parsedLine string) error {
 }
 
 type LogSerializer interface {
-	serializeEntry(logEntry LogEntry) (string, error)
+	serializeEntry(logEntry LogEntry) string
 }
