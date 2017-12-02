@@ -3,6 +3,7 @@ package commonformat
 import (
 	"regexp"
 	"strconv"
+	"time"
 
 	"github.com/omen-/httplog"
 )
@@ -24,7 +25,13 @@ func (l LogParser) ParseLine(line string) (httplog.LogEntry, error) {
 	logEntry.IP = catchedProperties[1]
 	logEntry.Identity = catchedProperties[2]
 	logEntry.UserID = catchedProperties[3]
-	logEntry.DateTime = catchedProperties[4]
+
+	time, err := time.Parse(TimeLayout, catchedProperties[4])
+	if err != nil {
+		return logEntry, httplog.NewLogParseError(line)
+	}
+	logEntry.Time = time
+
 	logEntry.Request = catchedProperties[5]
 
 	statusCode, err := strconv.Atoi(catchedProperties[6])

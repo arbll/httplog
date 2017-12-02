@@ -34,7 +34,7 @@ func main() {
 		logWriter := logfile.NewWriter(*outputFile, commonformat.LogSerializer{})
 		logWriter.WriteLogEntry(randomLogEntry(randomGenerator))
 		timeUntilNextRequest := time.Duration(randomGenerator.Intn(maxTimeBetweenRequests-minTimeBetweenRequests) + minTimeBetweenRequests)
-		time.Sleep(timeUntilNextRequest * time.Millisecond)
+		time.Sleep(timeUntilNextRequest * time.Millisecond) //TODO: time range
 	}
 }
 
@@ -44,7 +44,7 @@ func randomLogEntry(randomGenerator *rand.Rand) httplog.LogEntry {
 	logEntry.IP = randomIPV4(randomGenerator)
 	logEntry.Identity = "-"
 	logEntry.UserID = "-"
-	logEntry.DateTime = time.Now().Format(commonformat.TimeLayout)
+	logEntry.Time = time.Now()
 	logEntry.Request = randomRequest(randomGenerator)
 	logEntry.StatusCode = randomStatusCode(randomGenerator)
 	logEntry.BytesSent = randomGenerator.Int63n(4096)

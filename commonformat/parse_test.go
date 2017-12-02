@@ -3,20 +3,23 @@ package commonformat
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestParseLine(t *testing.T) {
-	const validIP = "127.0.0.1"
-	const validIdentity = "-"
-	const validUserID = "-"
-	const validDateTime = "28/Jul/2006:10:27:32 -0300"
-	const validRequest = "GET /foo/bar HTTP/1.0"
-	const validStatusCode = 404
-	const validBytesSent = int64(7218)
+	var (
+		validIP         = "127.0.0.1"
+		validIdentity   = "-"
+		validUserID     = "-"
+		validTime, _    = time.Parse(TimeLayout, "28/Jul/2006:10:27:32 -0300")
+		validRequest    = "GET /foo/bar HTTP/1.0"
+		validStatusCode = 404
+		validBytesSent  = int64(7218)
+	)
 
-	validLogLine := fmt.Sprintf(`%v %v %v [%v] "%v" %v %v`, validIP, validIdentity, validUserID, validDateTime, validRequest, validStatusCode, validBytesSent)
+	validLogLine := fmt.Sprintf(`%v %v %v [%v] "%v" %v %v`, validIP, validIdentity, validUserID, validTime.Format(TimeLayout), validRequest, validStatusCode, validBytesSent)
 
 	var parser = LogParser{}
 
@@ -25,7 +28,7 @@ func TestParseLine(t *testing.T) {
 		assert.Equal(t, validIP, logEntry.IP)
 		assert.Equal(t, validIdentity, logEntry.Identity)
 		assert.Equal(t, validUserID, logEntry.UserID)
-		assert.Equal(t, validDateTime, logEntry.DateTime)
+		assert.Equal(t, validTime, logEntry.Time)
 		assert.Equal(t, validRequest, logEntry.Request)
 		assert.Equal(t, validStatusCode, logEntry.StatusCode)
 		assert.Equal(t, validBytesSent, logEntry.BytesSent)

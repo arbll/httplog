@@ -2,6 +2,7 @@ package commonformat
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -9,11 +10,13 @@ import (
 )
 
 func TestSerialize(t *testing.T) {
+	var time, _ = time.Parse(TimeLayout, "28/Jul/2006:10:27:32 -0300")
+
 	logEntry := httplog.LogEntry{
 		IP:         "127.0.0.1",
 		Identity:   "-",
 		UserID:     "-",
-		DateTime:   "28/Jul/2006:10:27:32 -0300",
+		Time:       time,
 		Request:    "GET /foo/bar HTTP/1.0",
 		StatusCode: 404,
 		BytesSent:  int64(7218),
