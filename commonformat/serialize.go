@@ -8,7 +8,7 @@ import (
 
 type LogSerializer struct{}
 
-func (l LogSerializer) serializeEntry(logEntry httplog.LogEntry) string {
+func (l LogSerializer) SerializeEntry(logEntry httplog.LogEntry) string {
 	return fmt.Sprintf(`%v %v %v [%v] "%v" %v %v`, logEntry.IP, logEntry.Identity,
 		logEntry.UserID, logEntry.DateTime, logEntry.Request, logEntry.StatusCode, logEntry.BytesSent)
 }

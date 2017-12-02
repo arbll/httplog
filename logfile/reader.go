@@ -12,7 +12,7 @@ type Reader struct {
 	logs   chan httplog.LogEntry
 }
 
-func ReadLogFile(filePath string, logParser httplog.LogParser) (Reader, error) {
+func NewReader(filePath string, logParser httplog.LogParser) (Reader, error) {
 	var reader Reader
 
 	tailReader, err := tail.TailFile(filePath, tail.Config{Follow: true})
@@ -23,7 +23,7 @@ func ReadLogFile(filePath string, logParser httplog.LogParser) (Reader, error) {
 	reader.parser = logParser
 	reader.logs = make(chan httplog.LogEntry)
 
-	go reader.handleRawLines(tailReader)
+	go reader.handleRawLines(tailReader) //FIXME : Context / Close
 
 	return reader, nil
 }

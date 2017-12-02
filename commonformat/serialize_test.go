@@ -21,7 +21,7 @@ func TestSerialize(t *testing.T) {
 
 	serializer := LogSerializer{}
 
-	serializedEntry := serializer.serializeEntry(logEntry)
+	serializedEntry := serializer.SerializeEntry(logEntry)
 
 	assert.Equal(t, `127.0.0.1 - - [28/Jul/2006:10:27:32 -0300] "GET /foo/bar HTTP/1.0" 404 7218`, serializedEntry)
 }
