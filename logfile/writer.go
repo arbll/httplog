@@ -18,6 +18,7 @@ func NewWriter(filePath string, logSerializer httplog.LogSerializer) Writer {
 	}
 }
 
+//FIXME: Opening once is probably better if possible. Think to add close() and defer it
 func (writer Writer) WriteLogEntry(logEntry httplog.LogEntry) error {
 	logFile, err := os.OpenFile(writer.filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	serializedLogEntry := writer.logSerializer.SerializeEntry(logEntry)

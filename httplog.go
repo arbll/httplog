@@ -1,5 +1,7 @@
 package httplog
 
+//TODO: Split everything in different files
+
 type LogEntry struct {
 	IP         string
 	Identity   string
