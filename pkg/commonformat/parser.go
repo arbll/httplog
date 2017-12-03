@@ -7,14 +7,20 @@ import (
 	"time"
 )
 
-const commonFormatPropertyCount = 7
-const requestPropertyCount = 3
+const (
+	commonFormatPropertyCount = 7
+	requestPropertyCount      = 3
+)
 
-var commonFormatRegexp = regexp.MustCompile(`^(\S+) (\S+) (\S+) \[(.*)\] "(.*)" (\d{3}) (\d+)`)
-var requestRegexp = regexp.MustCompile(`^(\w+) (\S+) (\S+)`)
+var (
+	commonFormatRegexp = regexp.MustCompile(`^(\S+) (\S+) (\S+) \[(.*)\] "(.*)" (\d{3}) (\d+)`)
+	requestRegexp      = regexp.MustCompile(`^(\w+) (\S+) (\S+)`)
+)
 
+// LogParser is in charge of parsing common log format entries.
 type LogParser struct{}
 
+// ParseError is returned when parsing fails.
 type ParseError struct {
 	line string
 }
@@ -23,7 +29,8 @@ func (e *ParseError) Error() string {
 	return e.line
 }
 
-func (l LogParser) ParseLine(line string) (LogEntry, error) {
+// ParseLine parses a common log format entry.
+func (l *LogParser) ParseLine(line string) (LogEntry, error) {
 	var logEntry LogEntry
 	matchedGroups := commonFormatRegexp.FindStringSubmatch(line)
 	if len(matchedGroups) != commonFormatPropertyCount+1 {

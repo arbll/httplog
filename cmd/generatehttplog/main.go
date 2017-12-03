@@ -32,7 +32,7 @@ func main() {
 	x := .0
 
 	for {
-		logWriter := commonformat.NewWriter(*outputFile, commonformat.LogSerializer{})
+		logWriter := commonformat.NewWriter(*outputFile, &commonformat.LogSerializer{})
 		logWriter.WriteLogEntry(randomLogEntry(randomGenerator))
 		x += step
 		timeUntilNextRequest := math.Abs(math.Sin(x)*(maxTimeBetweenRequests-minTimeBetweenRequests)) + minTimeBetweenRequests

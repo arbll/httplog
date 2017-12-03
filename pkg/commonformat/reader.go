@@ -7,39 +7,40 @@ import (
 	"github.com/hpcloud/tail"
 )
 
+// Reader is in charge of reading lines from an actively written to common log
+// format file.
 type Reader struct {
+	Logs       chan LogEntry
 	parser     LogParser
-	logs       chan LogEntry
 	tailReader *tail.Tail
 }
 
-func NewReader(filePath string, logParser LogParser) (Reader, error) {
+// NewReader returns a running common log format file reader.
+func NewReader(filePath string, logParser LogParser) (*Reader, error) {
 	var reader Reader
 
 	locationEnd := &tail.SeekInfo{Offset: 0, Whence: io.SeekEnd}
 	tailReader, err := tail.TailFile(filePath, tail.Config{Follow: true, ReOpen: true, Location: locationEnd, Logger: tail.DiscardingLogger})
 	if err != nil {
-		return reader, err
+		return &reader, err
 	}
 
 	reader.parser = logParser
-	reader.logs = make(chan LogEntry)
 	reader.tailReader = tailReader
+	reader.Logs = make(chan LogEntry)
 
 	go reader.handleRawLines(tailReader)
 
-	return reader, nil
+	return &reader, nil
 }
 
-func (r Reader) Logs() chan LogEntry {
-	return r.logs
-}
-
-func (r Reader) Close() {
+// Close closes the reader.
+func (r *Reader) Close() {
 	r.tailReader.Stop()
 	r.tailReader.Cleanup()
 }
 
+// handleRawLines reads and parse new entries.
 func (r *Reader) handleRawLines(tailReader *tail.Tail) {
 	for line := range tailReader.Lines {
 		logEntry, err := r.parser.ParseLine(line.Text)
@@ -47,6 +48,6 @@ func (r *Reader) handleRawLines(tailReader *tail.Tail) {
 			log.Println(err)
 			return
 		}
-		r.logs <- logEntry
+		r.Logs <- logEntry
 	}
 }

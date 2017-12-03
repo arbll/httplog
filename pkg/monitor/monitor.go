@@ -20,14 +20,14 @@ const (
 // Monitor is in charge of monitoring a common log format file.
 type Monitor struct {
 	treshold      int64
-	logReader     commonformat.Reader
+	logReader     *commonformat.Reader
 	traficReports chan TraficReport
 	traficAlerts  chan Alert
 }
 
 // New returns a new monitor for the given log file that will generate alerts
 // at the given treshold.
-func New(treshold int64, logReader commonformat.Reader) *Monitor {
+func New(treshold int64, logReader *commonformat.Reader) *Monitor {
 	monitor := Monitor{
 		treshold:      treshold,
 		logReader:     logReader,
@@ -70,7 +70,7 @@ func (monitor *Monitor) onTraficAlert(alert Alert) {
 
 // monitorLogs is the event loop used to monitor the log file
 func (monitor *Monitor) monitorLogs() {
-	logsChannel := monitor.logReader.Logs()
+	logsChannel := monitor.logReader.Logs
 
 	alertMonitor := newAlertMonitor(alertMonitorPeriod, monitor.treshold)
 

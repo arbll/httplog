@@ -29,7 +29,7 @@ func main() {
 	ui.Loop()
 }
 
-func monitorFile(reader commonformat.Reader, mui *monitorUI) {
+func monitorFile(reader *commonformat.Reader, mui *monitorUI) {
 
 	monitor := monitor.New(10, reader)
 
