@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math"
 	"math/rand"
 	"time"
 
@@ -30,11 +31,15 @@ func main() {
 	randomSource := rand.NewSource(time.Now().UnixNano())
 	randomGenerator := rand.New(randomSource)
 
+	var step = math.Pi / 2 / 100
+	x := .0
+
 	for {
 		logWriter := logfile.NewWriter(*outputFile, commonformat.LogSerializer{})
 		logWriter.WriteLogEntry(randomLogEntry(randomGenerator))
-		timeUntilNextRequest := time.Duration(randomGenerator.Intn(maxTimeBetweenRequests-minTimeBetweenRequests) + minTimeBetweenRequests)
-		time.Sleep(timeUntilNextRequest * time.Millisecond) //TODO: time range
+		x += step
+		timeUntilNextRequest := math.Abs(math.Sin(x)*(maxTimeBetweenRequests-minTimeBetweenRequests)) + minTimeBetweenRequests
+		time.Sleep(time.Duration(timeUntilNextRequest) * time.Millisecond)
 	}
 }
 
