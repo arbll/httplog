@@ -5,8 +5,6 @@ import (
 	"regexp"
 	"strconv"
 	"time"
-
-	"github.com/omen-/httplog"
 )
 
 const commonFormatPropertyCount = 7
@@ -17,11 +15,19 @@ var requestRegexp = regexp.MustCompile(`^(\w+) (\S+) (\S+)`)
 
 type LogParser struct{}
 
-func (l LogParser) ParseLine(line string) (httplog.LogEntry, error) {
-	var logEntry httplog.LogEntry
+type ParseError struct {
+	line string
+}
+
+func (e *ParseError) Error() string {
+	return e.line
+}
+
+func (l LogParser) ParseLine(line string) (LogEntry, error) {
+	var logEntry LogEntry
 	matchedGroups := commonFormatRegexp.FindStringSubmatch(line)
 	if len(matchedGroups) != commonFormatPropertyCount+1 {
-		return logEntry, httplog.NewLogParseError(line)
+		return logEntry, &ParseError{line}
 	}
 
 	logEntry.IP = matchedGroups[1]
@@ -30,33 +36,33 @@ func (l LogParser) ParseLine(line string) (httplog.LogEntry, error) {
 
 	time, err := time.Parse(TimeLayout, matchedGroups[4])
 	if err != nil {
-		return logEntry, httplog.NewLogParseError(line)
+		return logEntry, &ParseError{line}
 	}
 	logEntry.Time = time
 
 	request, err := parseRequest(matchedGroups[5])
 	if err != nil {
-		return logEntry, httplog.NewLogParseError(line)
+		return logEntry, &ParseError{line}
 	}
 	logEntry.Request = request
 
 	statusCode, err := strconv.Atoi(matchedGroups[6])
 	if err != nil {
-		return logEntry, httplog.NewLogParseError(line)
+		return logEntry, &ParseError{line}
 	}
 	logEntry.StatusCode = statusCode
 
 	bytesSent, err := strconv.ParseInt(matchedGroups[7], 10, 64)
 	if err != nil {
-		return logEntry, httplog.NewLogParseError(line)
+		return logEntry, &ParseError{line}
 	}
 	logEntry.BytesSent = bytesSent
 
 	return logEntry, nil
 }
 
-func parseRequest(rawRequest string) (httplog.Request, error) {
-	var request httplog.Request
+func parseRequest(rawRequest string) (Request, error) {
+	var request Request
 	matchedGroups := requestRegexp.FindStringSubmatch(rawRequest)
 	if len(matchedGroups) != requestPropertyCount+1 {
 		return request, errors.New("")

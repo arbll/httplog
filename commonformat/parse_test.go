@@ -5,8 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/omen-/httplog"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +14,7 @@ func TestParseLine(t *testing.T) {
 		validIdentity   = "-"
 		validUserID     = "-"
 		validTime, _    = time.Parse(TimeLayout, "28/Jul/2006:10:27:32 -0300")
-		validRequest    = httplog.Request{Method: "GET", Resource: "/foo/bar", HTTPVersion: "HTTP/1.0"}
+		validRequest    = Request{Method: "GET", Resource: "/foo/bar", HTTPVersion: "HTTP/1.0"}
 		validStatusCode = 404
 		validBytesSent  = int64(7218)
 	)

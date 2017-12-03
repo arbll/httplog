@@ -5,19 +5,17 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/omen-/httplog"
 )
 
 func TestSerialize(t *testing.T) {
 	var time, _ = time.Parse(TimeLayout, "28/Jul/2006:10:27:32 -0300")
 
-	logEntry := httplog.LogEntry{
+	logEntry := LogEntry{
 		IP:         "127.0.0.1",
 		Identity:   "-",
 		UserID:     "-",
 		Time:       time,
-		Request:    httplog.Request{Method: "GET", Resource: "/foo/bar", HTTPVersion: "HTTP/1.0"},
+		Request:    Request{Method: "GET", Resource: "/foo/bar", HTTPVersion: "HTTP/1.0"},
 		StatusCode: 404,
 		BytesSent:  int64(7218),
 	}
