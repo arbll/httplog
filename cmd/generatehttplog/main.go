@@ -7,10 +7,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/omen-/httplog"
-
-	"github.com/omen-/httplog/commonformat"
-	"github.com/omen-/httplog/logfile"
+	"github.com/omen-/httplog/pkg/commonformat"
 )
 
 const (
@@ -35,7 +32,7 @@ func main() {
 	x := .0
 
 	for {
-		logWriter := logfile.NewWriter(*outputFile, commonformat.LogSerializer{})
+		logWriter := commonformat.NewWriter(*outputFile, commonformat.LogSerializer{})
 		logWriter.WriteLogEntry(randomLogEntry(randomGenerator))
 		x += step
 		timeUntilNextRequest := math.Abs(math.Sin(x)*(maxTimeBetweenRequests-minTimeBetweenRequests)) + minTimeBetweenRequests
@@ -43,8 +40,8 @@ func main() {
 	}
 }
 
-func randomLogEntry(randomGenerator *rand.Rand) httplog.LogEntry {
-	var logEntry httplog.LogEntry
+func randomLogEntry(randomGenerator *rand.Rand) commonformat.LogEntry {
+	var logEntry commonformat.LogEntry
 
 	logEntry.IP = randomIPV4(randomGenerator)
 	logEntry.Identity = "-"
@@ -61,8 +58,8 @@ func randomIPV4(randomGenerator *rand.Rand) string {
 	return fmt.Sprintf("%v.%v.%v.%v", randomGenerator.Intn(256), randomGenerator.Intn(256), randomGenerator.Intn(256), randomGenerator.Intn(256))
 }
 
-func randomRequest(randomGenerator *rand.Rand) httplog.Request {
-	return httplog.Request{
+func randomRequest(randomGenerator *rand.Rand) commonformat.Request {
+	return commonformat.Request{
 		Method:      commonMethods[randomGenerator.Intn(len(commonMethods))],
 		Resource:    websiteResources[randomGenerator.Intn(len(websiteResources))],
 		HTTPVersion: "HTTP/1.1",

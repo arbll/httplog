@@ -1,7 +1,10 @@
-package logmonitor
+package monitor
 
-import "github.com/omen-/httplog"
-import "strings"
+import (
+	"strings"
+
+	"github.com/omen-/httplog/pkg/commonformat"
+)
 
 type TraficReport struct {
 	RequestCount      int64
@@ -9,7 +12,7 @@ type TraficReport struct {
 	RequestsBySection map[string]int64
 }
 
-func (traficReport *TraficReport) updateTraficReport(newLogEntry httplog.LogEntry) {
+func (traficReport *TraficReport) updateTraficReport(newLogEntry commonformat.LogEntry) {
 	section := extractSection(newLogEntry.Request.Resource)
 	traficReport.RequestsBySection[section]++
 	traficReport.BytesSentCount += newLogEntry.BytesSent

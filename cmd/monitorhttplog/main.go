@@ -3,12 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/omen-/httplog"
-
 	ui "github.com/gizak/termui"
-	"github.com/omen-/httplog/commonformat"
-	"github.com/omen-/httplog/logfile"
-	"github.com/omen-/httplog/logmonitor"
+	"github.com/omen-/httplog/pkg/commonformat"
+	"github.com/omen-/httplog/pkg/monitor"
 )
 
 func main() {
@@ -19,7 +16,7 @@ func main() {
 	}
 	defer ui.Close()
 
-	reader, err := logfile.NewReader("access.log", commonformat.LogParser{})
+	reader, err := commonformat.NewReader("access.log", commonformat.LogParser{})
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -27,14 +24,14 @@ func main() {
 
 	mui := buildUI()
 
-	go monitor(reader, mui)
+	go monitorFile(reader, mui)
 
 	ui.Loop()
 }
 
-func monitor(reader httplog.LogStream, mui *monitorUI) {
+func monitorFile(reader commonformat.Reader, mui *monitorUI) {
 
-	monitor := logmonitor.New(10, reader)
+	monitor := monitor.New(10, reader)
 
 	for {
 		select {

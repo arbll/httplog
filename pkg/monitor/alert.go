@@ -1,11 +1,11 @@
-package logmonitor
+package monitor
 
 import (
 	"container/list"
 	"fmt"
 	"time"
 
-	"github.com/omen-/httplog"
+	"github.com/omen-/httplog/pkg/commonformat"
 )
 
 type alertMonitor struct {
@@ -67,7 +67,7 @@ func newAlertMonitor(period time.Duration, threshold int64) alertMonitor {
 	}
 }
 
-func (alertMonitor *alertMonitor) addLogEntry(logEntry httplog.LogEntry) Alert {
+func (alertMonitor *alertMonitor) addLogEntry(logEntry commonformat.LogEntry) Alert {
 	alertMonitor.logList.PushBack(logEntry)
 	alertMonitor.totalTrafic++
 
@@ -80,7 +80,7 @@ func (alertMonitor *alertMonitor) addLogEntry(logEntry httplog.LogEntry) Alert {
 func (alertMonitor *alertMonitor) invalidateLogsBefore(time time.Time) {
 	l := alertMonitor.logList
 	var next *list.Element
-	for entry := l.Front(); entry != nil && entry.Value.(httplog.LogEntry).Time.Before(time); entry = next {
+	for entry := l.Front(); entry != nil && entry.Value.(commonformat.LogEntry).Time.Before(time); entry = next {
 		next = entry.Next()
 		alertMonitor.totalTrafic--
 		l.Remove(entry)

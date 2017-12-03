@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	ui "github.com/gizak/termui"
-	"github.com/omen-/httplog/logmonitor"
+	"github.com/omen-/httplog/pkg/monitor"
 )
 
 const sparklinesBufferSize = 160
@@ -110,7 +110,7 @@ func buildUI() *monitorUI {
 	return mui
 }
 
-func (mui *monitorUI) displayReport(report logmonitor.TraficReport) {
+func (mui *monitorUI) displayReport(report monitor.TraficReport) {
 	mui.requestSparklines.Lines[0].Data = append(mui.requestSparklines.Lines[0].Data, int(report.RequestCount))
 	mui.dataSparklines.Lines[0].Data = append(mui.dataSparklines.Lines[0].Data, int(report.BytesSentCount))
 
@@ -138,7 +138,7 @@ func (mui *monitorUI) displayReport(report logmonitor.TraficReport) {
 	ui.Render(ui.Body)
 }
 
-func (mui *monitorUI) displayAlert(alert logmonitor.Alert) {
+func (mui *monitorUI) displayAlert(alert monitor.Alert) {
 	mui.alerts = append(mui.alerts, alert.Alert())
 	mui.refreshAlerts()
 }

@@ -1,10 +1,10 @@
-package logmonitor
+package monitor
 
 import (
 	"log"
 	"time"
 
-	"github.com/omen-/httplog"
+	"github.com/omen-/httplog/pkg/commonformat"
 )
 
 const (
@@ -17,15 +17,15 @@ const (
 
 type Monitor struct {
 	treshold      int64
-	logStream     httplog.LogStream
+	logReader     commonformat.Reader
 	traficReports chan TraficReport
 	traficAlerts  chan Alert
 }
 
-func New(treshold int64, logStream httplog.LogStream) *Monitor {
+func New(treshold int64, logReader commonformat.Reader) *Monitor {
 	monitor := Monitor{
 		treshold:      treshold,
-		logStream:     logStream,
+		logReader:     logReader,
 		traficReports: make(chan TraficReport, traficReportBufferSize),
 		traficAlerts:  make(chan Alert, traficAlertBufferSize),
 	}
@@ -60,7 +60,7 @@ func (monitor *Monitor) onTraficAlert(alert Alert) {
 }
 
 func (monitor *Monitor) monitorLogs() {
-	logsChannel := monitor.logStream.Logs()
+	logsChannel := monitor.logReader.Logs()
 
 	alertMonitor := newAlertMonitor(alertMonitorPeriod, monitor.treshold)
 
