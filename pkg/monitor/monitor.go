@@ -1,3 +1,5 @@
+// Package monitor allows common log format file monitoring with periodic
+// trafic reports and alerts.
 package monitor
 
 import (
@@ -15,6 +17,7 @@ const (
 	traficAlertBufferSize  = 4096
 )
 
+// Monitor is in charge of monitoring a common log format file.
 type Monitor struct {
 	treshold      int64
 	logReader     commonformat.Reader
@@ -22,6 +25,8 @@ type Monitor struct {
 	traficAlerts  chan Alert
 }
 
+// New returns a new monitor for the given log file that will generate alerts
+// at the given treshold.
 func New(treshold int64, logReader commonformat.Reader) *Monitor {
 	monitor := Monitor{
 		treshold:      treshold,
@@ -35,17 +40,21 @@ func New(treshold int64, logReader commonformat.Reader) *Monitor {
 	return &monitor
 }
 
+// TraficReports return a channel to the trafic reports.
+// By default, the channel has a buffer size of 4096.
 func (monitor *Monitor) TraficReports() chan TraficReport {
 	return monitor.traficReports
 }
 
+// Alerts return a channel to the trafic alerts.
+// By default, the channel has a buffer size of 4096
 func (monitor *Monitor) Alerts() chan Alert {
 	return monitor.traficAlerts
 }
 
-func (monitor *Monitor) onTraficReport(traficReport TraficReport) {
+func (monitor *Monitor) onTraficReport(traficReport *TraficReport) {
 	select {
-	case monitor.traficReports <- traficReport:
+	case monitor.traficReports <- *traficReport:
 	default:
 		log.Println("Trafic report buffer is full, discarding new report")
 	}
@@ -59,13 +68,14 @@ func (monitor *Monitor) onTraficAlert(alert Alert) {
 	}
 }
 
+// monitorLogs is the event loop used to monitor the log file
 func (monitor *Monitor) monitorLogs() {
 	logsChannel := monitor.logReader.Logs()
 
 	alertMonitor := newAlertMonitor(alertMonitorPeriod, monitor.treshold)
 
 	traficReportTicker := time.NewTicker(traficReportPeriod)
-	traficReport := TraficReport{RequestsBySection: make(map[string]int64)}
+	traficReport := newTraficReport()
 
 	for {
 		select {
@@ -77,7 +87,7 @@ func (monitor *Monitor) monitorLogs() {
 			}
 		case <-traficReportTicker.C:
 			monitor.onTraficReport(traficReport)
-			traficReport = TraficReport{RequestsBySection: make(map[string]int64)}
+			traficReport = newTraficReport()
 		}
 	}
 }

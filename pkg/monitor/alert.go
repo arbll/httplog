@@ -16,49 +16,57 @@ type alertMonitor struct {
 	wasAboveThreshold bool
 }
 
-type TraficAlert struct {
-	triggeredAt   time.Time
-	alert         string
-	averageTrafic int64
-	direction     bool
-}
-
+// Alert is an interface used to represent an alert raised by the monitor.
 type Alert interface {
+	// TriggeredAt returns the instant at which the alert was triggered.
 	TriggeredAt() time.Time
+	// Alert returns the formated alert text.
 	Alert() string
 }
 
-func (traficAlert TraficAlert) TriggeredAt() time.Time {
-	return traficAlert.triggeredAt
+// TraficAlert represents a trafic alert.
+type TraficAlert struct {
+	Triggered     time.Time
+	AlertText     string
+	AverageTrafic int64
+	direction     bool
 }
 
-func (traficAlert TraficAlert) Alert() string {
-	return traficAlert.alert
-}
-
-func (traficAlert *TraficAlert) AverageTrafic() int64 {
-	return traficAlert.averageTrafic
-}
-
-func (traficAlert *TraficAlert) AboveThreshold() bool {
-	return traficAlert.direction
-}
-
-func (traficAlert *TraficAlert) UnderThreshold() bool {
-	return !traficAlert.direction
-}
-
-func newTraficAlert(triggeredAt time.Time, alert string, averageTrafic int64, direction bool) TraficAlert {
-	return TraficAlert{
-		triggeredAt:   triggeredAt,
-		alert:         alert,
-		averageTrafic: averageTrafic,
+func newTraficAlert(triggeredAt time.Time, alert string, averageTrafic int64, direction bool) *TraficAlert {
+	return &TraficAlert{
+		Triggered:     triggeredAt,
+		AlertText:     alert,
+		AverageTrafic: averageTrafic,
 		direction:     direction,
 	}
 }
 
-func newAlertMonitor(period time.Duration, threshold int64) alertMonitor {
-	return alertMonitor{
+// Alert returns the formated alert text.
+func (ta *TraficAlert) Alert() string {
+	return ta.AlertText
+}
+
+// TriggeredAt returns the instant at which the alert was triggered.
+func (ta *TraficAlert) TriggeredAt() time.Time {
+	return ta.Triggered
+}
+
+// AboveThreshold returns true if the alert was triggered because the trafic
+// went past the threshold.
+func (ta *TraficAlert) AboveThreshold() bool {
+	return ta.direction
+}
+
+// UnderThreshold returns true if the alert was triggered because the trafic
+// went back under the threshold.
+func (ta *TraficAlert) UnderThreshold() bool {
+	return !ta.direction
+}
+
+// newAlertMonitor returns a new alert monitor that will generate alerts when
+// the trafic during the given period exceed the given threshold.
+func newAlertMonitor(period time.Duration, threshold int64) *alertMonitor {
+	return &alertMonitor{
 		period:            period,
 		logList:           list.New(),
 		threshold:         threshold,
@@ -67,6 +75,9 @@ func newAlertMonitor(period time.Duration, threshold int64) alertMonitor {
 	}
 }
 
+// addLogEntry adds a new log entry to the log buffer.
+// Will raise an Alert if the new entry makes the traffic go above or under the
+// monitor threshold.
 func (alertMonitor *alertMonitor) addLogEntry(logEntry commonformat.LogEntry) Alert {
 	alertMonitor.logList.PushBack(logEntry)
 	alertMonitor.totalTrafic++
@@ -77,6 +88,7 @@ func (alertMonitor *alertMonitor) addLogEntry(logEntry commonformat.LogEntry) Al
 	return alert
 }
 
+// invalidateLogsBefore removes all the log entries before the given time.
 func (alertMonitor *alertMonitor) invalidateLogsBefore(time time.Time) {
 	l := alertMonitor.logList
 	var next *list.Element
@@ -91,6 +103,9 @@ func (alertMonitor *alertMonitor) isAboveThreshold() bool {
 	return alertMonitor.totalTrafic > alertMonitor.threshold
 }
 
+// checkTrafic checks if the current state of the trafic should raise an Alert.
+// The given instant will be used to set the Alert trigger time. time.Now()
+// should not be used since the logs might be delayed.
 func (alertMonitor *alertMonitor) checkTrafic(at time.Time) Alert {
 	if alertMonitor.isAboveThreshold() && !alertMonitor.wasAboveThreshold {
 		alertMonitor.wasAboveThreshold = true

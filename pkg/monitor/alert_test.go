@@ -18,10 +18,10 @@ func TestAboveThresholdTraficAlert(t *testing.T) {
 		assert.Nil(t, alert)
 	}
 
-	alert, ok := alertMonitor.addLogEntry(newLogEntry(now)).(TraficAlert)
+	alert, ok := alertMonitor.addLogEntry(newLogEntry(now)).(*TraficAlert)
 	assert.True(t, ok)
 	assert.True(t, alert.AboveThreshold())
-	assert.Equal(t, int64(11), alert.AverageTrafic())
+	assert.Equal(t, int64(11), alert.AverageTrafic)
 }
 
 func TestUnderThresholdTraficAlert(t *testing.T) {
@@ -34,10 +34,10 @@ func TestUnderThresholdTraficAlert(t *testing.T) {
 	}
 
 	entry := newLogEntry(now.Add(2*time.Minute + 1*time.Second))
-	alert, ok := alertMonitor.addLogEntry(entry).(TraficAlert)
+	alert, ok := alertMonitor.addLogEntry(entry).(*TraficAlert)
 	assert.True(t, ok)
 	assert.True(t, alert.UnderThreshold())
-	assert.Equal(t, int64(1), alert.AverageTrafic())
+	assert.Equal(t, int64(1), alert.AverageTrafic)
 }
 
 func newLogEntry(at time.Time) commonformat.LogEntry {
