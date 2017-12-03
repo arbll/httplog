@@ -44,3 +44,12 @@ func NewLogParseError(parsedLine string) error {
 type LogSerializer interface {
 	SerializeEntry(logEntry LogEntry) string
 }
+
+type LogStream interface {
+	Logs() chan LogEntry
+}
+
+type Alert interface {
+	TriggeredAt() time.Time
+	Alert() string
+}
