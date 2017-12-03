@@ -17,7 +17,7 @@ func NewReader(filePath string, logParser httplog.LogParser) (Reader, error) {
 	var reader Reader
 
 	locationEnd := &tail.SeekInfo{Offset: 0, Whence: io.SeekEnd}
-	tailReader, err := tail.TailFile(filePath, tail.Config{Follow: true, ReOpen: true, Location: locationEnd})
+	tailReader, err := tail.TailFile(filePath, tail.Config{Follow: true, ReOpen: true, Location: locationEnd, Logger: tail.DiscardingLogger})
 	if err != nil {
 		return reader, err
 	}
