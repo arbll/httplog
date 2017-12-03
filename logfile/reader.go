@@ -1,6 +1,7 @@
 package logfile
 
 import (
+	"io"
 	"log"
 
 	"github.com/hpcloud/tail"
@@ -15,7 +16,8 @@ type Reader struct {
 func NewReader(filePath string, logParser httplog.LogParser) (Reader, error) {
 	var reader Reader
 
-	tailReader, err := tail.TailFile(filePath, tail.Config{Follow: true})
+	locationEnd := &tail.SeekInfo{Offset: 0, Whence: io.SeekEnd}
+	tailReader, err := tail.TailFile(filePath, tail.Config{Follow: true, ReOpen: true, Location: locationEnd})
 	if err != nil {
 		return reader, err
 	}
@@ -28,7 +30,7 @@ func NewReader(filePath string, logParser httplog.LogParser) (Reader, error) {
 	return reader, nil
 }
 
-func (r Reader) Logs() chan httplog.LogEntry {
+func (r *Reader) Logs() chan httplog.LogEntry {
 	return r.logs
 }
 
