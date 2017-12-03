@@ -2,6 +2,7 @@ package logmonitor
 
 import (
 	"container/list"
+	"fmt"
 	"time"
 
 	"github.com/omen-/httplog"
@@ -62,7 +63,8 @@ func newAlertMonitor(period time.Duration, threshold int64) alertMonitor {
 }
 
 func (alertMonitor *alertMonitor) addLogEntry(logEntry httplog.LogEntry) httplog.Alert {
-	alertMonitor.logList.PushFront(logEntry)
+	fmt.Println(alertMonitor.logList)
+	alertMonitor.logList.PushBack(logEntry)
 	alertMonitor.totalTrafic++
 
 	alertMonitor.invalidateLogsBefore(logEntry.Time.Add(-alertMonitor.period))
@@ -73,7 +75,9 @@ func (alertMonitor *alertMonitor) addLogEntry(logEntry httplog.LogEntry) httplog
 
 func (alertMonitor *alertMonitor) invalidateLogsBefore(time time.Time) {
 	l := alertMonitor.logList
-	for entry := l.Front(); entry != nil && entry.Value.(httplog.LogEntry).Time.Before(time); entry = entry.Next() {
+	var next *list.Element
+	for entry := l.Front(); entry != nil && entry.Value.(httplog.LogEntry).Time.Before(time); entry = next {
+		next = entry.Next()
 		alertMonitor.totalTrafic--
 		l.Remove(entry)
 	}
@@ -84,13 +88,14 @@ func (alertMonitor *alertMonitor) isAboveThreshold() bool {
 }
 
 func (alertMonitor *alertMonitor) checkTrafic(at time.Time) httplog.Alert {
-	if alertMonitor.isAboveThreshold() {
-		if alertMonitor.wasAboveThreshold {
-			alertMonitor.wasAboveThreshold = false
-			return newTraficAlert(at, "Traffic is back to normal - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, false)
-		}
+	if alertMonitor.isAboveThreshold() && !alertMonitor.wasAboveThreshold {
 		alertMonitor.wasAboveThreshold = true
-		return newTraficAlert(at, "High traffic generated an alert - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, true)
+		alert := fmt.Sprintf("High traffic generated an alert - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, at)
+		return newTraficAlert(at, alert, alertMonitor.totalTrafic, true)
+	} else if !alertMonitor.isAboveThreshold() && alertMonitor.wasAboveThreshold {
+		alertMonitor.wasAboveThreshold = false
+		alert := fmt.Sprintf("Traffic is back to normal - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, at)
+		return newTraficAlert(at, alert, alertMonitor.totalTrafic, false)
 	}
 	return nil
 }

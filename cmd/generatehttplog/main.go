@@ -56,9 +56,12 @@ func randomIPV4(randomGenerator *rand.Rand) string {
 	return fmt.Sprintf("%v.%v.%v.%v", randomGenerator.Intn(256), randomGenerator.Intn(256), randomGenerator.Intn(256), randomGenerator.Intn(256))
 }
 
-func randomRequest(randomGenerator *rand.Rand) string {
-	return fmt.Sprintf("%v %v HTTP/1.%v", commonMethods[randomGenerator.Intn(len(commonMethods))],
-		websiteResources[randomGenerator.Intn(len(websiteResources))], randomGenerator.Intn(2))
+func randomRequest(randomGenerator *rand.Rand) httplog.Request {
+	return httplog.Request{
+		Method:      commonMethods[randomGenerator.Intn(len(commonMethods))],
+		Resource:    websiteResources[randomGenerator.Intn(len(websiteResources))],
+		HTTPVersion: "HTTP/1.1",
+	}
 }
 
 func randomStatusCode(randomGenerator *rand.Rand) int {

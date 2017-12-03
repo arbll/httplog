@@ -30,7 +30,7 @@ func NewReader(filePath string, logParser httplog.LogParser) (Reader, error) {
 	return reader, nil
 }
 
-func (r *Reader) Logs() chan httplog.LogEntry {
+func (r Reader) Logs() chan httplog.LogEntry {
 	return r.logs
 }
 

@@ -9,7 +9,7 @@ import (
 
 const (
 	traficReportPeriod = 10 * time.Second
-	alertMonitorPeriod = 2 * time.Minute
+	alertMonitorPeriod = 1 * time.Minute
 
 	traficReportBufferSize = 4096
 	traficAlertBufferSize  = 4096
@@ -39,6 +39,10 @@ func (monitor *Monitor) TraficReports() chan TraficReport {
 	return monitor.traficReports
 }
 
+func (monitor *Monitor) Alerts() chan httplog.Alert {
+	return monitor.traficAlerts
+}
+
 func (monitor *Monitor) onTraficReport(traficReport TraficReport) {
 	select {
 	case monitor.traficReports <- traficReport:
@@ -61,7 +65,7 @@ func (monitor *Monitor) monitorLogs() {
 	alertMonitor := newAlertMonitor(alertMonitorPeriod, monitor.treshold)
 
 	traficReportTicker := time.NewTicker(traficReportPeriod)
-	traficReport := TraficReport{}
+	traficReport := TraficReport{requestsBySection: make(map[string]int64)}
 
 	for {
 		select {
@@ -73,7 +77,7 @@ func (monitor *Monitor) monitorLogs() {
 			}
 		case <-traficReportTicker.C:
 			monitor.onTraficReport(traficReport)
-			traficReport = TraficReport{}
+			traficReport = TraficReport{requestsBySection: make(map[string]int64)}
 		}
 	}
 }
