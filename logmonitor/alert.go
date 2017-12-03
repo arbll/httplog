@@ -89,12 +89,12 @@ func (alertMonitor *alertMonitor) isAboveThreshold() bool {
 func (alertMonitor *alertMonitor) checkTrafic(at time.Time) httplog.Alert {
 	if alertMonitor.isAboveThreshold() && !alertMonitor.wasAboveThreshold {
 		alertMonitor.wasAboveThreshold = true
-		alert := fmt.Sprintf("High traffic generated an alert - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, at)
+		alert := fmt.Sprintf("[%v] High traffic generated an alert - Hits: %v", at.Format("15:04"), alertMonitor.totalTrafic)
 		return newTraficAlert(at, alert, alertMonitor.totalTrafic, true)
 	} else if !alertMonitor.isAboveThreshold() && alertMonitor.wasAboveThreshold {
 		alertMonitor.wasAboveThreshold = false
-		alert := fmt.Sprintf("Traffic is back to normal - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, at)
+		alert := fmt.Sprintf("[%v] Traffic is back to normal - Hits: %v", at.Format("15:04"), alertMonitor.totalTrafic)
 		return newTraficAlert(at, alert, alertMonitor.totalTrafic, false)
 	}
-	return newTraficAlert(at, fmt.Sprintf("Traffic is back to normal - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, at), alertMonitor.totalTrafic, false)
+	return nil
 }
