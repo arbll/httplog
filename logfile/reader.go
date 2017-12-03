@@ -34,7 +34,7 @@ func (r Reader) Logs() chan httplog.LogEntry {
 	return r.logs
 }
 
-func (r *Reader) handleRawLines(tailReader *tail.Tail) {
+func (r *Reader) handleRawLines(tailReader *tail.Tail) { //TODO Context + Close file
 	for line := range tailReader.Lines {
 		logEntry, err := r.parser.ParseLine(line.Text)
 		if err != nil {

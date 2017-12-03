@@ -96,5 +96,5 @@ func (alertMonitor *alertMonitor) checkTrafic(at time.Time) httplog.Alert {
 		alert := fmt.Sprintf("Traffic is back to normal - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, at)
 		return newTraficAlert(at, alert, alertMonitor.totalTrafic, false)
 	}
-	return nil
+	return newTraficAlert(at, fmt.Sprintf("Traffic is back to normal - Hits: %v, Triggered at %v", alertMonitor.totalTrafic, at), alertMonitor.totalTrafic, false)
 }
