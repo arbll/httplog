@@ -5,7 +5,6 @@ import (
 	"sort"
 
 	ui "github.com/gizak/termui"
-	"github.com/omen-/httplog"
 	"github.com/omen-/httplog/logmonitor"
 )
 
@@ -111,7 +110,7 @@ func buildUI() *monitorUI {
 	return mui
 }
 
-func (mui *monitorUI) displayReport(report logmonitor.TraficReport) { //TODO : Remove old values
+func (mui *monitorUI) displayReport(report logmonitor.TraficReport) {
 	mui.requestSparklines.Lines[0].Data = append(mui.requestSparklines.Lines[0].Data, int(report.RequestCount))
 	mui.dataSparklines.Lines[0].Data = append(mui.dataSparklines.Lines[0].Data, int(report.BytesSentCount))
 
@@ -139,7 +138,7 @@ func (mui *monitorUI) displayReport(report logmonitor.TraficReport) { //TODO : R
 	ui.Render(ui.Body)
 }
 
-func (mui *monitorUI) displayAlert(alert httplog.Alert) {
+func (mui *monitorUI) displayAlert(alert logmonitor.Alert) {
 	mui.alerts = append(mui.alerts, alert.Alert())
 	mui.refreshAlerts()
 }

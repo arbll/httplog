@@ -23,6 +23,11 @@ type TraficAlert struct {
 	direction     bool
 }
 
+type Alert interface {
+	TriggeredAt() time.Time
+	Alert() string
+}
+
 func (traficAlert TraficAlert) TriggeredAt() time.Time {
 	return traficAlert.triggeredAt
 }
@@ -62,7 +67,7 @@ func newAlertMonitor(period time.Duration, threshold int64) alertMonitor {
 	}
 }
 
-func (alertMonitor *alertMonitor) addLogEntry(logEntry httplog.LogEntry) httplog.Alert {
+func (alertMonitor *alertMonitor) addLogEntry(logEntry httplog.LogEntry) Alert {
 	alertMonitor.logList.PushBack(logEntry)
 	alertMonitor.totalTrafic++
 
@@ -86,7 +91,7 @@ func (alertMonitor *alertMonitor) isAboveThreshold() bool {
 	return alertMonitor.totalTrafic > alertMonitor.threshold
 }
 
-func (alertMonitor *alertMonitor) checkTrafic(at time.Time) httplog.Alert {
+func (alertMonitor *alertMonitor) checkTrafic(at time.Time) Alert {
 	if alertMonitor.isAboveThreshold() && !alertMonitor.wasAboveThreshold {
 		alertMonitor.wasAboveThreshold = true
 		alert := fmt.Sprintf("[%v] High traffic generated an alert - Hits: %v", at.Format("15:04"), alertMonitor.totalTrafic)

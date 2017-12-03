@@ -19,7 +19,7 @@ type Monitor struct {
 	treshold      int64
 	logStream     httplog.LogStream
 	traficReports chan TraficReport
-	traficAlerts  chan httplog.Alert
+	traficAlerts  chan Alert
 }
 
 func New(treshold int64, logStream httplog.LogStream) *Monitor {
@@ -27,7 +27,7 @@ func New(treshold int64, logStream httplog.LogStream) *Monitor {
 		treshold:      treshold,
 		logStream:     logStream,
 		traficReports: make(chan TraficReport, traficReportBufferSize),
-		traficAlerts:  make(chan httplog.Alert, traficAlertBufferSize),
+		traficAlerts:  make(chan Alert, traficAlertBufferSize),
 	}
 
 	go monitor.monitorLogs()
@@ -39,7 +39,7 @@ func (monitor *Monitor) TraficReports() chan TraficReport {
 	return monitor.traficReports
 }
 
-func (monitor *Monitor) Alerts() chan httplog.Alert {
+func (monitor *Monitor) Alerts() chan Alert {
 	return monitor.traficAlerts
 }
 
@@ -51,7 +51,7 @@ func (monitor *Monitor) onTraficReport(traficReport TraficReport) {
 	}
 }
 
-func (monitor *Monitor) onTraficAlert(alert httplog.Alert) {
+func (monitor *Monitor) onTraficAlert(alert Alert) {
 	select {
 	case monitor.traficAlerts <- alert:
 	default:
