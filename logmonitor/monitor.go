@@ -65,7 +65,7 @@ func (monitor *Monitor) monitorLogs() {
 	alertMonitor := newAlertMonitor(alertMonitorPeriod, monitor.treshold)
 
 	traficReportTicker := time.NewTicker(traficReportPeriod)
-	traficReport := TraficReport{requestsBySection: make(map[string]int64)}
+	traficReport := TraficReport{RequestsBySection: make(map[string]int64)}
 
 	for {
 		select {
@@ -77,7 +77,7 @@ func (monitor *Monitor) monitorLogs() {
 			}
 		case <-traficReportTicker.C:
 			monitor.onTraficReport(traficReport)
-			traficReport = TraficReport{requestsBySection: make(map[string]int64)}
+			traficReport = TraficReport{RequestsBySection: make(map[string]int64)}
 		}
 	}
 }

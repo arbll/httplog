@@ -4,16 +4,16 @@ import "github.com/omen-/httplog"
 import "strings"
 
 type TraficReport struct {
-	requestCount      int64
-	bytesSentCount    int64
-	requestsBySection map[string]int64
+	RequestCount      int64
+	BytesSentCount    int64
+	RequestsBySection map[string]int64
 }
 
 func (traficReport *TraficReport) updateTraficReport(newLogEntry httplog.LogEntry) {
 	section := extractSection(newLogEntry.Request.Resource)
-	traficReport.requestsBySection[section]++
-	traficReport.bytesSentCount += newLogEntry.BytesSent
-	traficReport.requestCount++
+	traficReport.RequestsBySection[section]++
+	traficReport.BytesSentCount += newLogEntry.BytesSent
+	traficReport.RequestCount++
 }
 
 func extractSection(resource string) string {

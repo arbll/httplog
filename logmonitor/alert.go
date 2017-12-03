@@ -63,7 +63,6 @@ func newAlertMonitor(period time.Duration, threshold int64) alertMonitor {
 }
 
 func (alertMonitor *alertMonitor) addLogEntry(logEntry httplog.LogEntry) httplog.Alert {
-	fmt.Println(alertMonitor.logList)
 	alertMonitor.logList.PushBack(logEntry)
 	alertMonitor.totalTrafic++
 
