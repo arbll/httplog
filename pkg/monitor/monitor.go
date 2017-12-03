@@ -9,7 +9,7 @@ import (
 
 const (
 	traficReportPeriod = 10 * time.Second
-	alertMonitorPeriod = 1 * time.Minute
+	alertMonitorPeriod = 2 * time.Minute
 
 	traficReportBufferSize = 4096
 	traficAlertBufferSize  = 4096
