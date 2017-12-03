@@ -17,7 +17,7 @@ func TestSerialize(t *testing.T) {
 		Identity:   "-",
 		UserID:     "-",
 		Time:       time,
-		Request:    "GET /foo/bar HTTP/1.0",
+		Request:    httplog.Request{Method: "GET", Resource: "/foo/bar", HTTPVersion: "HTTP/1.0"},
 		StatusCode: 404,
 		BytesSent:  int64(7218),
 	}
