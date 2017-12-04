@@ -24,9 +24,9 @@ Documentation can be found on [godoc](https://godoc.org/github.com/Omen-/httplog
 
   -h	Show usage
   -aperiod duration
-    	The traffic will be monitored [aperiod] time back to raise threshold alerts. (default 2m0s)
+    	An alert will be generated if the trafic for the past <aperiod> minutes exceed the given threshold. (default 2m0s)
   -logpath string
-    	Path to the common format log file. (default "access.log")
+    	Path to the common log format file. (default "access.log")
   -rperiod duration
     	Frequency at which reports will be generated. (default 10s)
   -threshold int
@@ -42,3 +42,22 @@ Documentation can be found on [godoc](https://godoc.org/github.com/Omen-/httplog
   -out string
         Output file path (default "access.log")
 ```
+
+## Dependencies
+
+**[hpcloud/tail](https://github.com/hpcloud/tail)**
+
+> Go package for reading from continously updated files (tail -f) 
+
+Reading continously updated files is platform dependent and a hard task in general. This library provide a cross-platform easy to use way of doing so. It is also the most widely used for this task.
+
+---
+
+**[gizak/termui](https://github.com/gizak/termui)**
+
+> Golang terminal dashboard 
+
+Pretty terminal ui.
+
+---
+

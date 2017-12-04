@@ -1,4 +1,4 @@
-// Package commonformat offers read and write access to common format log files.
+// Package commonformat offers read and write access to common log format files.
 package commonformat
 
 import (
