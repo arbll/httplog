@@ -29,7 +29,7 @@ func buildUI() *monitorUI {
 	splsReq := ui.NewSparklines(splReq)
 	splsReq.Height = 11
 	splsReq.BorderFg = ui.ColorWhite
-	splsReq.BorderLabel = "Requests / 10s"
+	splsReq.BorderLabel = "Requests"
 
 	splData := ui.NewSparkline()
 	splData.Height = 8
@@ -39,12 +39,12 @@ func buildUI() *monitorUI {
 	splsData := ui.NewSparklines(splData)
 	splsData.Height = 11
 	splsData.BorderFg = ui.ColorWhite
-	splsData.BorderLabel = "Bytes sent / 10s"
+	splsData.BorderLabel = "Bytes sent"
 
 	lsSections := ui.NewList()
 	lsSections.Items = []string{}
 	lsSections.ItemFgColor = ui.ColorYellow
-	lsSections.BorderLabel = "Req / Section (10s)"
+	lsSections.BorderLabel = "Req / Section"
 	lsSections.Height = 10
 
 	lsAlerts := ui.NewList()

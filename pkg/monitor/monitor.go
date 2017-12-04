@@ -10,26 +10,34 @@ import (
 )
 
 const (
-	trafficReportPeriod = 10 * time.Second
-	alertMonitorPeriod  = 2 * time.Minute
-
 	trafficReportBufferSize = 4096
 	trafficAlertBufferSize  = 4096
 )
 
+// Config holds configuration options that can be passed to New in order to
+// customize the monitor.
+type Config struct {
+	// TrafficReportPeriod is the duration between each report.
+	TrafficReportPeriod time.Duration
+	// AlertPeriod is the duration the monitor will keep logs to check if an Alert should be raised.
+	AlertPeriod time.Duration
+	// AlertThreshold is the threshold after which an allert will be triggered.
+	AlertThreshold int64
+}
+
 // Monitor is in charge of monitoring a common log format file.
 type Monitor struct {
-	treshold       int64
 	logReader      *commonformat.Reader
 	trafficReports chan TrafficReport
 	trafficAlerts  chan Alert
+	config         Config
 }
 
 // New returns a new monitor for the given log file that will generate alerts
-// at the given treshold.
-func New(treshold int64, logReader *commonformat.Reader) *Monitor {
+// at the given threshold.
+func New(config Config, logReader *commonformat.Reader) *Monitor {
 	monitor := Monitor{
-		treshold:       treshold,
+		config:         config,
 		logReader:      logReader,
 		trafficReports: make(chan TrafficReport, trafficReportBufferSize),
 		trafficAlerts:  make(chan Alert, trafficAlertBufferSize),
@@ -72,9 +80,9 @@ func (monitor *Monitor) onTrafficAlert(alert Alert) {
 func (monitor *Monitor) monitorLogs() {
 	logsChannel := monitor.logReader.Logs
 
-	alertMonitor := newAlertMonitor(alertMonitorPeriod, monitor.treshold)
+	alertMonitor := newAlertMonitor(monitor.config.AlertPeriod, monitor.config.AlertThreshold)
 
-	trafficReportTicker := time.NewTicker(trafficReportPeriod)
+	trafficReportTicker := time.NewTicker(monitor.config.TrafficReportPeriod)
 	trafficReport := newTrafficReport()
 
 	for {

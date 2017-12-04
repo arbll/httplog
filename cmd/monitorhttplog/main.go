@@ -1,7 +1,9 @@
 package main
 
 import (
+	"flag"
 	"log"
+	"time"
 
 	ui "github.com/gizak/termui"
 	"github.com/omen-/httplog/pkg/commonformat"
@@ -9,6 +11,18 @@ import (
 )
 
 func main() {
+	help := flag.Bool("h", false, "Show usage")
+	alertThreshold := flag.Int64("threshold", 200, "Traffic threshold after which an alert will be generated.")
+	alertPeriod := flag.Duration("aperiod", 2*time.Minute, "The traffic will be monitored [aperiod] time beck to raise threshold alerts.")
+	trafficReportPeriod := flag.Duration("rperiod", 10*time.Second, "Frequency at which reports will be generated.")
+	logPath := flag.String("logpath", "access.log", "Path to the common format log file.")
+
+	flag.Parse()
+
+	if *help {
+		flag.PrintDefaults()
+		return
+	}
 
 	err := ui.Init()
 	if err != nil {
@@ -16,7 +30,7 @@ func main() {
 	}
 	defer ui.Close()
 
-	reader, err := commonformat.NewReader("access.log", commonformat.LogParser{})
+	reader, err := commonformat.NewReader(*logPath, commonformat.LogParser{})
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -24,14 +38,20 @@ func main() {
 
 	mui := buildUI()
 
-	go monitorFile(reader, mui)
+	config := monitor.Config{
+		TrafficReportPeriod: *trafficReportPeriod,
+		AlertPeriod:         *alertPeriod,
+		AlertThreshold:      *alertThreshold,
+	}
+
+	go monitorFile(config, reader, mui)
 
 	ui.Loop()
 }
 
-func monitorFile(reader *commonformat.Reader, mui *monitorUI) {
+func monitorFile(config monitor.Config, reader *commonformat.Reader, mui *monitorUI) {
 
-	monitor := monitor.New(10, reader)
+	monitor := monitor.New(config, reader)
 
 	for {
 		select {
