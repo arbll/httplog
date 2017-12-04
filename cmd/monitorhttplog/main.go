@@ -13,7 +13,7 @@ import (
 func main() {
 	help := flag.Bool("h", false, "Show usage")
 	alertThreshold := flag.Int64("threshold", 200, "Traffic threshold after which an alert will be generated.")
-	alertPeriod := flag.Duration("aperiod", 2*time.Minute, "The traffic will be monitored [aperiod] time beck to raise threshold alerts.")
+	alertPeriod := flag.Duration("aperiod", 2*time.Minute, "The traffic will be monitored [aperiod] time back to raise threshold alerts.")
 	trafficReportPeriod := flag.Duration("rperiod", 10*time.Second, "Frequency at which reports will be generated.")
 	logPath := flag.String("logpath", "access.log", "Path to the common format log file.")
 
