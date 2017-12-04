@@ -30,7 +30,7 @@ func main() {
 	}
 	defer ui.Close()
 
-	reader, err := commonformat.NewReader(*logPath, commonformat.LogParser{})
+	reader, err := commonformat.NewReader(*logPath, &commonformat.LogParser{})
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -11,12 +11,12 @@ import (
 // format file.
 type Reader struct {
 	Logs       chan LogEntry
-	parser     LogParser
+	parser     *LogParser
 	tailReader *tail.Tail
 }
 
 // NewReader returns a running common log format file reader.
-func NewReader(filePath string, logParser LogParser) (*Reader, error) {
+func NewReader(filePath string, logParser *LogParser) (*Reader, error) {
 	var reader Reader
 
 	locationEnd := &tail.SeekInfo{Offset: 0, Whence: io.SeekEnd}
