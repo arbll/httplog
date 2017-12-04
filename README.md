@@ -1,0 +1,1 @@
+[![GoDoc](https://godoc.org/github.com/Omen-/httplog?status.svg)](https://godoc.org/github.com/Omen-/httplog) [![Go Report Card](https://goreportcard.com/badge/github.com/Omen-/httplog)](https://goreportcard.com/report/github.com/Omen-/httplog)
