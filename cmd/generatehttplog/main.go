@@ -22,8 +22,15 @@ var (
 )
 
 func main() {
+	help := flag.Bool("h", false, "Show usage")
 	outputFile := flag.String("out", "access.log", "Output file path")
+
 	flag.Parse()
+
+	if *help {
+		flag.PrintDefaults()
+		return
+	}
 
 	randomSource := rand.NewSource(time.Now().UnixNano())
 	randomGenerator := rand.New(randomSource)

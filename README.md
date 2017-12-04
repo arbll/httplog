@@ -19,12 +19,12 @@ Documentation can be found on [godoc](https://godoc.org/github.com/Omen-/httplog
 
 ### Monitor
 
-```bash
+```
 > monitorhttplog -h
 
   -h	Show usage
   -aperiod duration
-    	The traffic will be monitored [aperiod] time beck to raise threshold alerts. (default 2m0s)
+    	The traffic will be monitored [aperiod] time back to raise threshold alerts. (default 2m0s)
   -logpath string
     	Path to the common format log file. (default "access.log")
   -rperiod duration
@@ -32,5 +32,13 @@ Documentation can be found on [godoc](https://godoc.org/github.com/Omen-/httplog
   -threshold int
     	Traffic threshold after which an alert will be generated. (default 200)
 ```
-go install github.com/omen-/httplog/cmd/generatehttplog
-go install github.com/omen-/httplog/cmd/monitorhttplog
+
+### Generator
+
+```
+> generatehttplog -h
+ 
+  -h    Show usage
+  -out string
+        Output file path (default "access.log")
+```
