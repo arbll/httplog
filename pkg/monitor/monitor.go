@@ -1,5 +1,5 @@
 // Package monitor allows common log format file monitoring with periodic
-// trafic reports and alerts.
+// traffic reports and alerts.
 package monitor
 
 import (
@@ -10,29 +10,29 @@ import (
 )
 
 const (
-	traficReportPeriod = 10 * time.Second
-	alertMonitorPeriod = 2 * time.Minute
+	trafficReportPeriod = 10 * time.Second
+	alertMonitorPeriod  = 2 * time.Minute
 
-	traficReportBufferSize = 4096
-	traficAlertBufferSize  = 4096
+	trafficReportBufferSize = 4096
+	trafficAlertBufferSize  = 4096
 )
 
 // Monitor is in charge of monitoring a common log format file.
 type Monitor struct {
-	treshold      int64
-	logReader     *commonformat.Reader
-	traficReports chan TraficReport
-	traficAlerts  chan Alert
+	treshold       int64
+	logReader      *commonformat.Reader
+	trafficReports chan TrafficReport
+	trafficAlerts  chan Alert
 }
 
 // New returns a new monitor for the given log file that will generate alerts
 // at the given treshold.
 func New(treshold int64, logReader *commonformat.Reader) *Monitor {
 	monitor := Monitor{
-		treshold:      treshold,
-		logReader:     logReader,
-		traficReports: make(chan TraficReport, traficReportBufferSize),
-		traficAlerts:  make(chan Alert, traficAlertBufferSize),
+		treshold:       treshold,
+		logReader:      logReader,
+		trafficReports: make(chan TrafficReport, trafficReportBufferSize),
+		trafficAlerts:  make(chan Alert, trafficAlertBufferSize),
 	}
 
 	go monitor.monitorLogs()
@@ -40,31 +40,31 @@ func New(treshold int64, logReader *commonformat.Reader) *Monitor {
 	return &monitor
 }
 
-// TraficReports return a channel to the trafic reports.
+// TrafficReports return a channel to the traffic reports.
 // By default, the channel has a buffer size of 4096.
-func (monitor *Monitor) TraficReports() chan TraficReport {
-	return monitor.traficReports
+func (monitor *Monitor) TrafficReports() chan TrafficReport {
+	return monitor.trafficReports
 }
 
-// Alerts return a channel to the trafic alerts.
+// Alerts return a channel to the traffic alerts.
 // By default, the channel has a buffer size of 4096
 func (monitor *Monitor) Alerts() chan Alert {
-	return monitor.traficAlerts
+	return monitor.trafficAlerts
 }
 
-func (monitor *Monitor) onTraficReport(traficReport *TraficReport) {
+func (monitor *Monitor) onTrafficReport(trafficReport *TrafficReport) {
 	select {
-	case monitor.traficReports <- *traficReport:
+	case monitor.trafficReports <- *trafficReport:
 	default:
-		log.Println("Trafic report buffer is full, discarding new report")
+		log.Println("Traffic report buffer is full, discarding new report")
 	}
 }
 
-func (monitor *Monitor) onTraficAlert(alert Alert) {
+func (monitor *Monitor) onTrafficAlert(alert Alert) {
 	select {
-	case monitor.traficAlerts <- alert:
+	case monitor.trafficAlerts <- alert:
 	default:
-		log.Println("Trafic alerts buffer is full, discarding new alert")
+		log.Println("Traffic alerts buffer is full, discarding new alert")
 	}
 }
 
@@ -74,20 +74,20 @@ func (monitor *Monitor) monitorLogs() {
 
 	alertMonitor := newAlertMonitor(alertMonitorPeriod, monitor.treshold)
 
-	traficReportTicker := time.NewTicker(traficReportPeriod)
-	traficReport := newTraficReport()
+	trafficReportTicker := time.NewTicker(trafficReportPeriod)
+	trafficReport := newTrafficReport()
 
 	for {
 		select {
 		case logEntry := <-logsChannel:
-			traficReport.updateTraficReport(logEntry)
+			trafficReport.updateTrafficReport(logEntry)
 			alert := alertMonitor.addLogEntry(logEntry)
 			if alert != nil {
-				monitor.onTraficAlert(alert)
+				monitor.onTrafficAlert(alert)
 			}
-		case <-traficReportTicker.C:
-			monitor.onTraficReport(traficReport)
-			traficReport = newTraficReport()
+		case <-trafficReportTicker.C:
+			monitor.onTrafficReport(trafficReport)
+			trafficReport = newTrafficReport()
 		}
 	}
 }

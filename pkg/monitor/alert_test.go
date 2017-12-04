@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAboveThresholdTraficAlert(t *testing.T) {
+func TestAboveThresholdTrafficAlert(t *testing.T) {
 	alertMonitor := newAlertMonitor(2*time.Minute, 10)
 
 	now := time.Now()
@@ -18,13 +18,13 @@ func TestAboveThresholdTraficAlert(t *testing.T) {
 		assert.Nil(t, alert)
 	}
 
-	alert, ok := alertMonitor.addLogEntry(newLogEntry(now)).(*TraficAlert)
+	alert, ok := alertMonitor.addLogEntry(newLogEntry(now)).(*TrafficAlert)
 	assert.True(t, ok)
 	assert.True(t, alert.AboveThreshold())
-	assert.Equal(t, int64(11), alert.AverageTrafic)
+	assert.Equal(t, int64(11), alert.AverageTraffic)
 }
 
-func TestUnderThresholdTraficAlert(t *testing.T) {
+func TestUnderThresholdTrafficAlert(t *testing.T) {
 	alertMonitor := newAlertMonitor(2*time.Minute, 10)
 
 	now := time.Now()
@@ -34,10 +34,10 @@ func TestUnderThresholdTraficAlert(t *testing.T) {
 	}
 
 	entry := newLogEntry(now.Add(2*time.Minute + 1*time.Second))
-	alert, ok := alertMonitor.addLogEntry(entry).(*TraficAlert)
+	alert, ok := alertMonitor.addLogEntry(entry).(*TrafficAlert)
 	assert.True(t, ok)
 	assert.True(t, alert.UnderThreshold())
-	assert.Equal(t, int64(1), alert.AverageTrafic)
+	assert.Equal(t, int64(1), alert.AverageTraffic)
 }
 
 func newLogEntry(at time.Time) commonformat.LogEntry {

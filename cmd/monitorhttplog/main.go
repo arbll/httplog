@@ -35,7 +35,7 @@ func monitorFile(reader *commonformat.Reader, mui *monitorUI) {
 
 	for {
 		select {
-		case logReport := <-monitor.TraficReports():
+		case logReport := <-monitor.TrafficReports():
 			mui.displayReport(logReport)
 		case alert := <-monitor.Alerts():
 			mui.displayAlert(alert)

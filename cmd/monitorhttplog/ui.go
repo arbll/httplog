@@ -110,7 +110,7 @@ func buildUI() *monitorUI {
 	return mui
 }
 
-func (mui *monitorUI) displayReport(report monitor.TraficReport) {
+func (mui *monitorUI) displayReport(report monitor.TrafficReport) {
 	mui.requestSparklines.Lines[0].Data = append(mui.requestSparklines.Lines[0].Data, int(report.RequestCount))
 	mui.dataSparklines.Lines[0].Data = append(mui.dataSparklines.Lines[0].Data, int(report.BytesSentCount))
 
