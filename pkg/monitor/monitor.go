@@ -55,7 +55,7 @@ func (monitor *Monitor) TrafficReports() chan TrafficReport {
 }
 
 // Alerts return a channel to the traffic alerts.
-// By default, the channel has a buffer size of 4096
+// By default, the channel has a buffer size of 4096.
 func (monitor *Monitor) Alerts() chan Alert {
 	return monitor.trafficAlerts
 }
@@ -76,7 +76,7 @@ func (monitor *Monitor) onTrafficAlert(alert Alert) {
 	}
 }
 
-// monitorLogs is the event loop used to monitor the log file
+// monitorLogs is the event loop used to monitor the log file.
 func (monitor *Monitor) monitorLogs() {
 	logsChannel := monitor.logReader.Logs
 

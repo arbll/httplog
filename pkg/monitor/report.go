@@ -12,7 +12,7 @@ type TrafficReport struct {
 	RequestCount int64
 	// BytesSentCount is the number of bytes sent from the server to the clients
 	BytesSentCount int64
-	// RequestsBySection contains the number of request for each sections
+	// RequestsBySection contains the number of requests for each sections
 	RequestsBySection map[string]int64
 }
 

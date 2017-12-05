@@ -2,6 +2,8 @@
 
 [![GoDoc](https://godoc.org/github.com/Omen-/httplog?status.svg)](https://godoc.org/github.com/Omen-/httplog) [![Go Report Card](https://goreportcard.com/badge/github.com/Omen-/httplog)](https://goreportcard.com/report/github.com/Omen-/httplog)
 
+![Screenshot](/_assets/screenshot.png)
+
 ## Installation
 
 This project requires Go 1.8 or later.
@@ -74,7 +76,7 @@ Pretty terminal ui.
 
 + Right now, the alert check is invoked when a new log entry is consumed. I made this design decision to ensure that alerts are shown as triggered at the time the server exceeded the threshold. It seemed important to me to trust the time of the log more than our system time since there might be delays (server flushing log file periodically, monitor overloaded, ...) and that may cause "fake" alerts to trigger in certain cases. Concretely this leads to a scenario where a "back to normal" alert is not triggered if the traffic stop abruptly and nothing is logged for 2+ minutes.
 
-+ This principle of trusting only the time from the log files is not applied on the 10s reports. It would be a big improvement and would allow loading past log data.
++ This principle of only trusting the time from the log files is not applied on the 10s reports. It would be a big improvement and would allow loading past log data.
 
 + Support more log formats. I made sure to split monitoring and reading/parsing responsibilities to allow for future improvements without too much refactoring.
 
