@@ -33,7 +33,7 @@ monitorhttplog
 
   -h    Show usage
   -aperiod duration
-        An alert will be generated if the trafic for the past <aperiod> minutes exceed the given threshold. (default 2m0s)
+        An alert will be generated if the traffic for the past <aperiod> minutes exceed the given threshold. (default 2m0s)
   -logpath string
         Path to the common log format file. (default "access.log")
   -rperiod duration
