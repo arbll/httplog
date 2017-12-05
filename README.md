@@ -19,7 +19,7 @@ Documentation can be found on [godoc](https://godoc.org/github.com/Omen-/httplog
 
 ## Usage
 
-If you just want to try the program just create a directory and run in any order :
+If you just want to try the program create a directory and run in any order :
 
 ```
 generatehttplog
